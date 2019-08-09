@@ -4,15 +4,10 @@
    */
   // "env:" supplies predefined global variables
   "env": {
-    "browser": true,
     "es6": true,
     "node": true,
-    "mocha": true,
-    "mongo": true
+    "mocha": true
   },
-  // "plugins": ["prettier"],
-  // "extends": ["plugin:prettier/recommended"],
-  // define the type of file `script` or `module` for ES6 Modules
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
