@@ -7,7 +7,6 @@ const charactersRouter = express.Router();
 const jsonBodyParser = express.json();
 
 // dummy db
-const db = '';
 
 const charNotFoundError = {
   error: 'character not found'
@@ -21,15 +20,17 @@ function missingValueError(key) {
 
 charactersRouter
   .route('/')
-  //.get(async (req, res, next) => {
-  .get((req, res, next) => {
+  .get(async (req, res, next) => {
+  // .get((req, res, next) => {
+    const db = req.app.get('db');
     try {
-      // const characters = await CharactersService.getAllCharacters(db);
-      const characters = CharactersService.getAllCharacters(db);
+      const characters = await CharactersService.getAllCharacters(db);
+      // const characters = CharactersService.getAllCharacters('db');
 
       return res.json(characters);
     }
     catch (e) {
+      console.error(e.message);
       next();
     }
   });
@@ -42,11 +43,13 @@ charactersRouter
 
 charactersRouter
   .route('/create')
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(jsonBodyParser, async (req, res, next) => {
+    const db = req.app.get('db');
+
     const { charName, charRace, charClass, charDesc } = req.body;
     const newChar = { charName, charRace, charClass, charDesc };
 
-    console.log('post', req.body);
+    // console.log('post', req.body);
 
     for (const [key, value] of Object.entries(newChar)) {
       if (!value) {
@@ -56,24 +59,26 @@ charactersRouter
     }
 
     try {
-      const char = CharactersService.addCharacter(db, newChar);
+      const character = await CharactersService.addCharacter(db, newChar);
 
-      return res.status(201)
-        .json(char);
+      return res.status(201).send(character);
     }
     catch (e) {
+      console.error(e.message);
       next();
     }
   });
 
-function checkCharacterExists(req, res, next) {
+async function checkCharacterExists(req, res, next) {
+
   try {
-    const character = CharactersService.getCharacter(
+    const db = req.app.get('db');
+    const character = await CharactersService.getCharacter(
       db,
       req.params.character_id
     );
 
-    console.log('CHAR ID', req.params.character_id);
+    // console.log('CHAR ID', req.params.character_id);
     
     if (!character) {
       console.log('did not find character');
@@ -85,6 +90,7 @@ function checkCharacterExists(req, res, next) {
     next();
   }
   catch (e) {
+    console.error(e.message);
     next();
   }
 }

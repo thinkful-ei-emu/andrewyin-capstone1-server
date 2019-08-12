@@ -1,23 +1,33 @@
 const xss = require('xss');
 
-const VoxMachina = require('../store');
+const table = 'characters';
 
 const CharactersService = {
   getAllCharacters(db) {
-    return [...VoxMachina];
+    return db(table)
+      .select('*');
   },
   getCharacter(db, charId) {
-    return VoxMachina.find(char => char.id === charId);
+    return db(table)
+      .select('*')
+      .where({ charId })
+      .first();
   },
-  addCharacter(db, char) {
-    const newChar = {
-      id: `${VoxMachina.length+1}`,
-      ...char
-    };
-    console.log(newChar);
-    VoxMachina.push(newChar);
-
-    return char;
+  async addCharacter(db, char) {
+    const [newChar] = await db(table)
+      .insert(char)
+      .returning('*');
+    return newChar;
+  },
+  updateCharacter(db, charId, newInfo) {
+    return db(table)
+      .where({ charId })
+      .update(newInfo);
+  },
+  deleteCharacter(db, charId) {
+    return db(table)
+      .where({ charId })
+      .del();
   }
 };
 

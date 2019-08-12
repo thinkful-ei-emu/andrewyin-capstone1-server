@@ -1,0 +1,3 @@
+TRUNCATE
+  characters
+  RESTART IDENTITY CASCADE;
