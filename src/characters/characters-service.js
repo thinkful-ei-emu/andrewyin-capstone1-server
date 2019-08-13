@@ -3,9 +3,10 @@ const xss = require('xss');
 const table = 'characters';
 
 const CharactersService = {
-  getAllCharacters(db) {
+  getAllCharacters(db, userId) {
     return db(table)
-      .select('*');
+      .select('*')
+      .where({ userId });
   },
   getCharacter(db, charId) {
     return db(table)
@@ -14,7 +15,7 @@ const CharactersService = {
       .first();
   },
   async addCharacter(db, char) {
-    const [newChar] = await db(table)
+    const newChar = await db(table)
       .insert(char)
       .returning('*');
     return newChar;

@@ -6,9 +6,9 @@ const config = require('../config');
 const userTable = 'dnd_users';
 
 const AuthService = {
-  getUserByUserName(db, user_name) {
+  getUserByUserName(db, userName) { 
     return db(userTable)
-      .where({ user_name })
+      .where({ userName })
       .first();
   },
   comparePasswords(password, hash) {

@@ -6,8 +6,8 @@ const jsonBodyParser = express.json();
 
 authRouter
   .post('/login', jsonBodyParser, async (req, res, next) => {
-    const { user_name, password } = req.body;
-    const loginUser = { user_name, password };
+    const { userName, password } = req.body;
+    const loginUser = { userName, password };
 
     const invalidLoginError = {
       error: 'invalid login'
@@ -20,26 +20,30 @@ authRouter
     }
 
     try {
-      const dbUser = await AuthService.getUserByUserName(req.app.get('db'), loginUser.user_name);
-
+      const dbUser = await AuthService.getUserByUserName(req.app.get('db'), loginUser.userName);
       if (!dbUser) {
+        console.log('user not found');
         return res.status(400)
           .json(invalidLoginError);
       }
 
       const compareMatch = await AuthService.comparePasswords(loginUser.password, dbUser.password);
       if (!compareMatch) {
+        console.log('password incorrect');
         return res.status(400)
           .json(invalidLoginError);
       }
 
-      const sub = dbUser.user_name;
-      const payload = { user_id: dbUser.id };
+      const sub = dbUser.userName;
+      const payload = { userId: dbUser.userId };
+      const authToken = await AuthService.createJWT(sub, payload);
+      console.log(authToken);
       res.send({
-        authToken: AuthService.createJWT(sub, payload)
+        authToken 
       });
     }
     catch (e) {
+      console.log(e);
       next();
     }
   });

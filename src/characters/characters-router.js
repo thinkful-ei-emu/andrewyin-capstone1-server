@@ -1,5 +1,6 @@
 const express = require('express');
 const CharactersService = require('./characters-service');
+const { requireAuth } = require('../auth/jwt-auth');
 
 // const CharacterController = require('./character-controller');
 
@@ -20,12 +21,12 @@ function missingValueError(key) {
 
 charactersRouter
   .route('/')
+  .all(requireAuth)
   .get(async (req, res, next) => {
-  // .get((req, res, next) => {
+    // .get((req, res, next) => {
     const db = req.app.get('db');
     try {
-      const characters = await CharactersService.getAllCharacters(db);
-      // const characters = CharactersService.getAllCharacters('db');
+      const characters = await CharactersService.getAllCharacters(db, req.user.userId);
 
       return res.json(characters);
     }
@@ -37,19 +38,21 @@ charactersRouter
 
 charactersRouter
   .route('/:character_id')
-  .get(checkCharacterExists, (req, res) => {
+  .all(requireAuth)
+  .all(checkCharacterExists)
+  .get((req, res) => {
     return res.json(res.character);
   });
 
 charactersRouter
   .route('/create')
-  .post(jsonBodyParser, async (req, res, next) => {
+  .all(requireAuth)
+  .all(jsonBodyParser)
+  .post(async (req, res, next) => {
     const db = req.app.get('db');
 
     const { charName, charRace, charClass, charDesc } = req.body;
-    const newChar = { charName, charRace, charClass, charDesc };
-
-    // console.log('post', req.body);
+    const newChar = { charName, charRace, charClass, charDesc, userId: req.user.userId };
 
     for (const [key, value] of Object.entries(newChar)) {
       if (!value) {
@@ -60,6 +63,7 @@ charactersRouter
 
     try {
       const character = await CharactersService.addCharacter(db, newChar);
+      console.log(character);
 
       return res.status(201).send(character);
     }
@@ -78,8 +82,11 @@ async function checkCharacterExists(req, res, next) {
       req.params.character_id
     );
 
+    if (req.user.userId !== character.userId) {
+      return res.status(401).end();
+    }
     // console.log('CHAR ID', req.params.character_id);
-    
+
     if (!character) {
       console.log('did not find character');
       return res.status(404)

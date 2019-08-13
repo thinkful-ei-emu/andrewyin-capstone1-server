@@ -1,3 +1,4 @@
 TRUNCATE
-  characters
+  characters,
+  dnd_users
   RESTART IDENTITY CASCADE;
