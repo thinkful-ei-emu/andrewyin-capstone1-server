@@ -11,6 +11,9 @@
     "deploy": "git push heroku master",
     "migrate": "postgrator --config postgrator-config.js"
   },
+  "engines": {
+    "node": "10.16.0"
+  },
   "author": "Andrew Yin",
   "license": "ISC",
   "devDependencies": {

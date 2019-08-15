@@ -74,7 +74,6 @@ charactersRouter
   });
 
 async function checkCharacterExists(req, res, next) {
-
   try {
     const db = req.app.get('db');
     const character = await CharactersService.getCharacter(
@@ -82,15 +81,14 @@ async function checkCharacterExists(req, res, next) {
       req.params.character_id
     );
 
-    if (req.user.userId !== character.userId) {
-      return res.status(401).end();
-    }
     // console.log('CHAR ID', req.params.character_id);
 
     if (!character) {
-      console.log('did not find character');
       return res.status(404)
         .json(charNotFoundError);
+    }
+    if (req.user.userId !== character.userId) {
+      return res.status(401).end();
     }
 
     res.character = character;
