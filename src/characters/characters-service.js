@@ -14,11 +14,10 @@ const CharactersService = {
       .where({ charId })
       .first();
   },
-  async addCharacter(db, char) {
-    const newChar = await db(table)
+  addCharacter(db, char) {
+    return db(table)
       .insert(char)
       .returning('*');
-    return newChar;
   },
   updateCharacter(db, charId, newInfo) {
     return db(table)

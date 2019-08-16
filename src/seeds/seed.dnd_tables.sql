@@ -23,6 +23,6 @@ BEGIN;
     ('Pike', 'Gnome', 'Cleric', 'A gnome cleric part of the group called Vox Machina.', 2),
     ('Scanlan', 'Gnome', 'Bard', 'A gnome bard part of the group called Vox Machina.', 2),
     ('Vax', 'Half Elf', 'Rogue', 'A half elf rogue part of the group called Vox Machina.', 2),
-    ('Grog', 'Half Elf', 'Ranger', 'A half elf ranger part of the group called Vox Machina.', 2);
+    ('Vex', 'Half Elf', 'Ranger', 'A half elf ranger part of the group called Vox Machina.', 2);
 
 COMMIT;

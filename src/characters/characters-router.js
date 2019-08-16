@@ -63,12 +63,12 @@ charactersRouter
 
     try {
       const character = await CharactersService.addCharacter(db, newChar);
-      console.log(character);
+      // console.log(character);
 
       return res.status(201).send(character);
     }
     catch (e) {
-      console.error(e.message);
+      // console.error(e.message);
       next();
     }
   });

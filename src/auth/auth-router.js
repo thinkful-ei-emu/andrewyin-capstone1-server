@@ -22,14 +22,14 @@ authRouter
     try {
       const dbUser = await AuthService.getUserByUserName(req.app.get('db'), loginUser.userName);
       if (!dbUser) {
-        console.log('user not found');
+        console.error('user not found');
         return res.status(400)
           .json(invalidLoginError);
       }
 
       const compareMatch = await AuthService.comparePasswords(loginUser.password, dbUser.password);
       if (!compareMatch) {
-        console.log('password incorrect');
+        console.error('password incorrect');
         return res.status(400)
           .json(invalidLoginError);
       }
@@ -37,13 +37,13 @@ authRouter
       const sub = dbUser.userName;
       const payload = { userId: dbUser.userId };
       const authToken = await AuthService.createJWT(sub, payload);
-      console.log(authToken);
+      // console.log(authToken);
       res.send({
         authToken 
       });
     }
     catch (e) {
-      console.log(e);
+      console.error(e);
       next();
     }
   });

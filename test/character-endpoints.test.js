@@ -26,24 +26,30 @@ describe('Character Endpoints', function () {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
-
   describe('GET /api/characters', () => {
     context('given there is data', () => {
-      beforeEach('insert characters', () => {
-        return helpers.seedCharactersTable(
+      beforeEach('insert characters', async () => {
+        const seedUser = await helpers.seedUsers(
+          db,
+          testUsers
+        );
+        const seedChar = await helpers.seedCharactersTable(
           db,
           testCharacters
         );
+
+        return Promise.all([seedUser, seedChar]);
       });
 
       it('responds with 200 and a list of characters', async () => {
         const res = await supertest(app)
           .get('/api/characters')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200);
 
         res.body.forEach((actualCharacter, index) => {
           const testChar = {
-            charId: index+1,
+            charId: index + 1,
             ...testCharacters[index]
           };
 
@@ -51,7 +57,7 @@ describe('Character Endpoints', function () {
           expect(actualCharacter.charName).to.equal(testChar.charName);
           expect(actualCharacter.charRace).to.equal(testChar.charRace);
           expect(actualCharacter.charClass).to.equal(testChar.charClass);
-          expect(actualCharacter.charDesc).to.equal(testChar.charDesc);            
+          expect(actualCharacter.charDesc).to.equal(testChar.charDesc);
         });
       });
 
@@ -63,6 +69,7 @@ describe('Character Endpoints', function () {
 
         const res = await supertest(app)
           .get('/api/characters/1')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200);
         const actualCharacter = res.body;
 
@@ -73,29 +80,44 @@ describe('Character Endpoints', function () {
         expect(actualCharacter.charDesc).to.equal(testChar.charDesc);
       });
     });
-  });
 
-  describe('POST /api/characters/create', () => {
-    it('should add the character to the list', async () => {
-      const taryon = {
-        charName: 'Taryon',
-        charRace: 'Human',
-        charClass: 'Artificer',
-        charDesc: 'A human artficer who joined Vox Machina for a short duration.'
-      };
-      const res = await supertest(app)
-        .post('/api/characters/create')
-        .send(taryon)
-        .expect(201);
+    describe('POST /api/characters/create', () => {
+      beforeEach('insert characters', async () => {
+        const seedUser = await helpers.seedUsers(
+          db,
+          testUsers
+        );
+        const seedChar = await helpers.seedCharactersTable(
+          db,
+          testCharacters
+        );
 
-      const newChar = res.body;
+        return Promise.all([seedUser, seedChar]);
+      });
 
-      // console.log(newChar);
-      expect(newChar.charId).to.equal(1);
-      expect(newChar.charName).to.equal(taryon.charName);
-      expect(newChar.charRace).to.equal(taryon.charRace);
-      expect(newChar.charClass).to.equal(taryon.charClass);
-      expect(newChar.charDesc).to.equal(taryon.charDesc);
+
+      it('should add the character to the list', async () => {
+        const taryon = {
+          charName: 'Taryon',
+          charRace: 'Human',
+          charClass: 'Artificer',
+          charDesc: 'A human artficer who joined Vox Machina for a short duration.'
+        };
+        const res = await supertest(app)
+          .post('/api/characters/create')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[1]))
+          .send(taryon)
+          .expect(201);
+
+        const [newChar] = res.body;
+
+        expect(newChar.charId).to.equal(testCharacters.length + 1);
+        expect(newChar.charName).to.equal(taryon.charName);
+        expect(newChar.charRace).to.equal(taryon.charRace);
+        expect(newChar.charClass).to.equal(taryon.charClass);
+        expect(newChar.charDesc).to.equal(taryon.charDesc);
+      });
     });
   });
+
 });
