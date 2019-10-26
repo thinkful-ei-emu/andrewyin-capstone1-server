@@ -50,12 +50,31 @@ charactersRouter
   .post(async (req, res, next) => {
     const db = req.app.get('db');
 
-    const { charName, charRace, charClass, charDesc } = req.body;
+    console.log(req.body);
+
+    const { 
+      charName, 
+      charRace, 
+      charClass, 
+      charDesc,
+      strength,
+      dexterity,
+      constitution,
+      intelligence,
+      wisdom,
+      charisma
+    } = req.body;
     const newChar = { 
       charName, 
       charRace, 
       charClass, 
-      charDesc, 
+      charDesc,
+      strength,
+      dexterity,
+      constitution,
+      intelligence,
+      wisdom,
+      charisma,
       userId: req.user.userId };
 
     for (const [key, value] of Object.entries(newChar)) {
