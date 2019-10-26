@@ -23,7 +23,6 @@ charactersRouter
   .route('/')
   .all(requireAuth)
   .get(async (req, res, next) => {
-    // .get((req, res, next) => {
     const db = req.app.get('db');
     try {
       const characters = await CharactersService.getAllCharacters(db, req.user.userId);
@@ -52,7 +51,12 @@ charactersRouter
     const db = req.app.get('db');
 
     const { charName, charRace, charClass, charDesc } = req.body;
-    const newChar = { charName, charRace, charClass, charDesc, userId: req.user.userId };
+    const newChar = { 
+      charName, 
+      charRace, 
+      charClass, 
+      charDesc, 
+      userId: req.user.userId };
 
     for (const [key, value] of Object.entries(newChar)) {
       if (!value) {
@@ -63,12 +67,11 @@ charactersRouter
 
     try {
       const character = await CharactersService.addCharacter(db, newChar);
-      // console.log(character);
 
       return res.status(201).send(character);
     }
     catch (e) {
-      // console.error(e.message);
+      console.error(e.message);
       next();
     }
   });
