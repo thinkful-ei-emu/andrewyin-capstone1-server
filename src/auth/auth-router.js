@@ -39,7 +39,7 @@ authRouter
       const authToken = await AuthService.createJWT(sub, payload);
       // console.log(authToken);
       res.send({
-        authToken 
+        authToken
       });
     }
     catch (e) {
@@ -47,5 +47,6 @@ authRouter
       next();
     }
   });
+
 
 module.exports = authRouter;
