@@ -7,8 +7,6 @@ const { requireAuth } = require('../auth/jwt-auth');
 const charactersRouter = express.Router();
 const jsonBodyParser = express.json();
 
-// dummy db
-
 const charNotFoundError = {
   error: 'character not found'
 };
