@@ -3,6 +3,11 @@
 ## Summary
 5e Stuff is meant to be a lightweight application that helps Dungeons and Dragons 5e players keep track of their characters. The app will not autofill any information from the books, so the user is responsible to filling in any information of their character on their own. This functionality may be added at a later date. At the moment, the app only keeps track of crucial details such as character name, class, race and ability scores. A future update will add class feature and ability, equipment, and spell sections.
 
+Live App Link: https://5e-stuff.netlify.com<br/>
+Live Server Link: https://intense-wildwood-33210.herokuapp.com/api<br/>
+Client Repo: https://github.com/andrewyin1994/5e-creator-client<br/>
+
+
 ## API Documentation
 
 `/api/auth/login`
